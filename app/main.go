@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"unicode"
-	// bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
 // Ensures gofmt doesn't remove the "os" encoding/json import (feel free to remove this!)
@@ -34,6 +33,20 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 		}
 
 		return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
+	} else if bencodedString[0] == 'i' {
+		stIdx := 1
+		if bencodedString[stIdx] == '-' {
+			stIdx += 1
+		}
+
+		for ; unicode.IsDigit(rune(bencodedString[stIdx])); stIdx++ {
+		}
+
+		val64, err := strconv.ParseInt(bencodedString[1:stIdx], 10, 64)
+		if err != nil {
+			return "", err
+		}
+		return val64, nil
 	} else {
 		return "", fmt.Errorf("Only strings are supported at the moment")
 	}
