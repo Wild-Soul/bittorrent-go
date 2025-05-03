@@ -1,56 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
-	"unicode"
-)
+	"strings"
 
-// Ensures gofmt doesn't remove the "os" encoding/json import (feel free to remove this!)
-var _ = json.Marshal
+	"github.com/codecrafters-io/bittorrent-starter-go/app/bencode"
+)
 
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
-func decodeBencode(bencodedString string) (interface{}, error) {
-	if unicode.IsDigit(rune(bencodedString[0])) {
-		var firstColonIndex int
-
-		for i := 0; i < len(bencodedString); i++ {
-			if bencodedString[i] == ':' {
-				firstColonIndex = i
-				break
-			}
-		}
-
-		lengthStr := bencodedString[:firstColonIndex]
-
-		length, err := strconv.Atoi(lengthStr)
-		if err != nil {
-			return "", err
-		}
-
-		return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
-	} else if bencodedString[0] == 'i' {
-		stIdx := 1
-		if bencodedString[stIdx] == '-' {
-			stIdx += 1
-		}
-
-		for ; unicode.IsDigit(rune(bencodedString[stIdx])); stIdx++ {
-		}
-
-		val64, err := strconv.ParseInt(bencodedString[1:stIdx], 10, 64)
-		if err != nil {
-			return "", err
-		}
-		return val64, nil
-	} else {
-		return "", fmt.Errorf("Only strings are supported at the moment")
-	}
-}
 
 func main() {
 	fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
@@ -60,7 +22,8 @@ func main() {
 	if command == "decode" {
 		bencodedValue := os.Args[2]
 
-		decoded, err := decodeBencode(bencodedValue)
+		buffer := strings.NewReader(bencodedValue)
+		decoded, err := bencode.DecodeBencode(bufio.NewReader(buffer))
 		if err != nil {
 			fmt.Println(err)
 			return
