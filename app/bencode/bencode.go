@@ -74,6 +74,39 @@ func DecodeBencode(buffer *bufio.Reader) (interface{}, error) {
 
 			list = append(list, value)
 		}
+	case 'd':
+		// handle parsing of dictionary
+		dictionary := map[string]interface{}{}
+		for {
+			c, rbErr := buffer.ReadByte()
+			if rbErr == nil {
+				if c == 'e' {
+					return dictionary, nil
+				} else {
+					buffer.UnreadByte()
+				}
+			}
+
+			// Decode dictionary key
+			value, err := DecodeBencode(buffer)
+			if err != nil {
+				return nil, err
+			}
+
+			key, ok := value.(string)
+			if !ok {
+				return nil, fmt.Errorf("bencode decode: non string key")
+			}
+
+			// Decode value
+			value, err = DecodeBencode(buffer)
+			if err != nil {
+				return nil, err
+			}
+
+			dictionary[key] = value
+		}
+
 	default:
 		// handle parsing of strings
 		delim = byte(':')
