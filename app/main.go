@@ -1,38 +1,33 @@
 package main
 
 import (
-	"bufio"
-	"encoding/json"
+	"context"
 	"fmt"
 	"os"
-	"strings"
 
-	"github.com/codecrafters-io/bittorrent-starter-go/app/bencode"
+	"github.com/codecrafters-io/bittorrent-starter-go/app/cmd"
 )
-
-// Example:
-// - 5:hello -> hello
-// - 10:hello12345 -> hello12345
 
 func main() {
 	fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
+	ctx := context.Background()
+	registry := cmd.NewRegistry()
 
-	command := os.Args[1]
+	// Register available commands
+	registry.Register(&cmd.DecodeCmd{})
+	registry.Register(&cmd.InfoCmd{})
 
-	if command == "decode" {
-		bencodedValue := os.Args[2]
+	cmdName := os.Args[1]
+	args := os.Args[2:]
 
-		buffer := strings.NewReader(bencodedValue)
-		decoded, err := bencode.DecodeBencode(bufio.NewReader(buffer))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+	cmd, found := registry.Get(cmdName)
+	if !found {
+		fmt.Println("Unknown command: " + cmdName)
+		return
+	}
 
-		jsonOutput, _ := json.Marshal(decoded)
-		fmt.Println(string(jsonOutput))
-	} else {
-		fmt.Println("Unknown command: " + command)
+	if err := cmd.Execute(ctx, args); err != nil {
+		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
 }

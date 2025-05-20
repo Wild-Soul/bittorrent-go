@@ -131,6 +131,4 @@ func DecodeBencode(buffer *bufio.Reader) (interface{}, error) {
 
 		return string(stringContent), nil
 	}
-
-	return "", fmt.Errorf("Only strings are supported at the moment")
 }
