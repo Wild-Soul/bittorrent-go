@@ -25,7 +25,7 @@ func (d *DecodeCmd) Execute(ctx context.Context, args []string) error {
 	inputBytes := []byte(bencodedValue)
 
 	byteReader := bytes.NewReader(inputBytes)
-	decoded, err := bencode.DecodeBencode(bufio.NewReader(byteReader))
+	decoded, err := bencode.Decode(bufio.NewReader(byteReader))
 	if err != nil {
 		fmt.Printf("Failed to parse value %v\n", bencodedValue)
 		return err

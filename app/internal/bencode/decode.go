@@ -28,7 +28,7 @@ func readBytesTillDelim(buffer *bufio.Reader, delim *byte, cap int) ([]byte, err
 	return bytesBuffer, nil
 }
 
-func DecodeBencode(buffer *bufio.Reader) (interface{}, error) {
+func Decode(buffer *bufio.Reader) (interface{}, error) {
 	char, err := buffer.ReadByte()
 	if err != nil {
 		return "", err
@@ -67,7 +67,7 @@ func DecodeBencode(buffer *bufio.Reader) (interface{}, error) {
 				}
 			}
 
-			value, err := DecodeBencode(buffer) // decode the remainder of the string.
+			value, err := Decode(buffer) // decode the remainder of the string.
 			if err != nil {
 				return nil, err
 			}
@@ -88,7 +88,7 @@ func DecodeBencode(buffer *bufio.Reader) (interface{}, error) {
 			}
 
 			// Decode dictionary key
-			value, err := DecodeBencode(buffer)
+			value, err := Decode(buffer)
 			if err != nil {
 				return nil, err
 			}
@@ -99,7 +99,7 @@ func DecodeBencode(buffer *bufio.Reader) (interface{}, error) {
 			}
 
 			// Decode value
-			value, err = DecodeBencode(buffer)
+			value, err = Decode(buffer)
 			if err != nil {
 				return nil, err
 			}
