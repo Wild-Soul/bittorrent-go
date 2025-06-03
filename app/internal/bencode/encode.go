@@ -13,11 +13,11 @@ func Encode(w io.Writer, val interface{}) error {
 		_, err := fmt.Fprintf(w, "%d:%s", len(v), v)
 		return err
 
-	case int:
-		_, err := fmt.Fprintf(w, "i%de", v)
+	case []byte:
+		_, err := fmt.Fprintf(w, "%d:%v", len(v), v)
 		return err
 
-	case int64:
+	case int, int8, int64:
 		_, err := fmt.Fprintf(w, "i%de", v)
 		return err
 

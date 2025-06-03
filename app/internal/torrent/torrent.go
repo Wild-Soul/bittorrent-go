@@ -8,6 +8,9 @@ import (
 	"github.com/codecrafters-io/bittorrent-starter-go/app/internal/bencode"
 )
 
+// lenght of hash of each peice in bytes
+const PIECE_LEN = 20
+
 type Torrent struct {
 	Announce string `bencode:"announce"`
 	Info     Info   `bencode:"info"`
@@ -17,7 +20,7 @@ type Info struct {
 	Length   int64  `bencode:"length"`
 	Name     string `bencode:"name"`
 	PieceLen int64  `bencode:"piece length"`
-	Pieces   string `bencode:"pieces"`
+	Pieces   []byte `bencode:"pieces"`
 }
 
 // ParseTorrentFile reads and parses a .torrent file.
@@ -53,7 +56,8 @@ func ParseTorrentFile(path string) (*Torrent, error) {
 	length, _ := infoMap["length"].(int64)
 	name, _ := infoMap["name"].(string)
 	pieceLen, _ := infoMap["piece length"].(int64)
-	pieces, _ := infoMap["pieces"].(string)
+	piecesStr, _ := infoMap["pieces"].(string)
+	pieces := []byte(piecesStr)
 
 	return &Torrent{
 		Announce: announce,
