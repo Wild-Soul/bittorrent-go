@@ -36,6 +36,7 @@ func (i *InfoCmd) Execute(ctx context.Context, args []string) error {
 		return fmt.Errorf("erro encoding: (%w)", err)
 	}
 
+	fmt.Println("Tracker URL:", torrent.Announce)
 	fmt.Println("Length:", torrent.Info.Length)
 
 	// compute sha-1 of buffer.
