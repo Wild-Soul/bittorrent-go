@@ -1,7 +1,6 @@
 package torrent
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -50,8 +49,6 @@ func (tf *TorrentFile) RequestPeers(peerId [20]byte, port uint16) ([]Peer, error
 	if err != nil {
 		return []Peer{}, err
 	}
-
-	fmt.Println("Peer url:", url)
 
 	res, err := http.Get(url)
 	if err != nil {
