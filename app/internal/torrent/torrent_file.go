@@ -2,16 +2,20 @@ package torrent
 
 import (
 	"bufio"
+	"bytes"
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/codecrafters-io/bittorrent-starter-go/app/internal/bencode"
+	"github.com/jackpal/bencode-go"
 )
 
 // lenght of hash of each peice in bytes
 const PIECE_LEN = 20
 
-type Torrent struct {
+type TorrentFile struct {
 	Announce string `bencode:"announce"`
 	Info     Info   `bencode:"info"`
 }
@@ -24,7 +28,7 @@ type Info struct {
 }
 
 // ParseTorrentFile reads and parses a .torrent file.
-func ParseTorrentFile(path string) (*Torrent, error) {
+func ParseTorrentFile(path string) (*TorrentFile, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -59,7 +63,7 @@ func ParseTorrentFile(path string) (*Torrent, error) {
 	piecesStr, _ := infoMap["pieces"].(string)
 	pieces := []byte(piecesStr)
 
-	return &Torrent{
+	return &TorrentFile{
 		Announce: announce,
 		Info: Info{
 			Length:   length,
@@ -68,4 +72,21 @@ func ParseTorrentFile(path string) (*Torrent, error) {
 			Pieces:   pieces,
 		},
 	}, nil
+}
+
+func (tf *TorrentFile) GetInfohash() (string, error) {
+	buf := new(bytes.Buffer)
+	err := bencode.Marshal(buf, tf.Info)
+	if err != nil {
+		log.Printf("Error while encoding info: %v", err)
+		return "", fmt.Errorf("error encoding: (%w)", err)
+	}
+
+	// compute info hash.
+	// TODO:: Introuduce Torrent to keep only torrent info, that way won't have to do decode/encode.
+	sha1Hasher := sha1.New()
+	sha1Hasher.Write(buf.Bytes())
+	infoHash := hex.EncodeToString(sha1Hasher.Sum(nil))
+
+	return infoHash, nil
 }

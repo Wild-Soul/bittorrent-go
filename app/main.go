@@ -16,6 +16,7 @@ func main() {
 	// Register available commands
 	registry.Register(&cmd.DecodeCmd{})
 	registry.Register(&cmd.InfoCmd{})
+	registry.Register(&cmd.PeersCmd{})
 
 	cmdName := os.Args[1]
 	args := os.Args[2:]

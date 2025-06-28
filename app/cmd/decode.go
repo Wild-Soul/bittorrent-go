@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/codecrafters-io/bittorrent-starter-go/app/internal/bencode"
+	"github.com/jackpal/bencode-go"
 )
 
 type DecodeCmd struct{}
