@@ -9,7 +9,7 @@ import (
 	"github.com/codecrafters-io/bittorrent-starter-go/app/internal/torrent"
 )
 
-const PORT = 6681
+const Port uint16 = 6681
 
 type PeersCmd struct{}
 
@@ -31,7 +31,7 @@ func (peerCmd *PeersCmd) Execute(tx context.Context, args []string) error {
 	peerId := make([]byte, 20)
 	rand.Read(peerId)
 
-	peers, err := torrentFile.RequestPeers([20]byte(peerId), PORT)
+	peers, err := torrentFile.RequestPeers([20]byte(peerId), Port)
 	if err != nil {
 		log.Fatal(err)
 	}

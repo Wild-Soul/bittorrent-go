@@ -33,7 +33,7 @@ func (i *InfoCmd) Execute(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Info Hash:", infohash)
+	fmt.Println("Info Hash:", hex.EncodeToString(infohash))
 
 	// Piece length and their hashses.
 	fmt.Printf("Piece Length: %v\nPiece Hashes:\n", torrentFile.Info.PieceLen)

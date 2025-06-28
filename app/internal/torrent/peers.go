@@ -1,6 +1,7 @@
 package torrent
 
 import (
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -30,7 +31,7 @@ func (tf *TorrentFile) generatePeersReqUrl(peerId [20]byte, port uint16) (string
 	}
 
 	params := url.Values{
-		"info_hash":  []string{infohash},
+		"info_hash":  []string{string(infohash)},
 		"peer_id":    []string{string(peerId[:])},
 		"port":       []string{strconv.Itoa(int(port))},
 		"uploaded":   []string{"0"},
@@ -60,6 +61,7 @@ func (tf *TorrentFile) RequestPeers(peerId [20]byte, port uint16) ([]Peer, error
 	var trackerResponse TrackerResponse
 	err = bencode.Unmarshal(res.Body, &trackerResponse)
 	if err != nil {
+		log.Printf("Error in unmarhalling bencoded response: %v", err)
 		return []Peer{}, err
 	}
 

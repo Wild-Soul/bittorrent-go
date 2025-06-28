@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/sha1"
-	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
@@ -74,19 +73,18 @@ func ParseTorrentFile(path string) (*TorrentFile, error) {
 	}, nil
 }
 
-func (tf *TorrentFile) GetInfohash() (string, error) {
+func (tf *TorrentFile) GetInfohash() ([]byte, error) {
 	buf := new(bytes.Buffer)
 	err := bencode.Marshal(buf, tf.Info)
 	if err != nil {
 		log.Printf("Error while encoding info: %v", err)
-		return "", fmt.Errorf("error encoding: (%w)", err)
+		return []byte{}, fmt.Errorf("error encoding: (%w)", err)
 	}
 
 	// compute info hash.
 	// TODO:: Introuduce Torrent to keep only torrent info, that way won't have to do decode/encode.
 	sha1Hasher := sha1.New()
 	sha1Hasher.Write(buf.Bytes())
-	infoHash := hex.EncodeToString(sha1Hasher.Sum(nil))
 
-	return infoHash, nil
+	return sha1Hasher.Sum(nil), nil
 }
