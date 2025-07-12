@@ -17,6 +17,7 @@ func main() {
 	registry.Register(&cmd.DecodeCmd{})
 	registry.Register(&cmd.InfoCmd{})
 	registry.Register(&cmd.PeersCmd{})
+	registry.Register(&cmd.Handshake{})
 
 	cmdName := os.Args[1]
 	args := os.Args[2:]
